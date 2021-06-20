@@ -1,0 +1,114 @@
+<!--
+title: DIYHue Lampen en Bridge
+description: 
+published: 1
+date: 2021-06-20T10:43:24.616Z
+tags: 
+editor: ckeditor
+dateCreated: 2021-06-20T10:43:24.616Z
+-->
+
+<p>Een mooi project om je eigen Philips Hue Lampen en bridge te maken. Meer informatie over dit project kan je vinden op de pagina van de ontwikkelaar zelf: <a href="https://diyhue.org/">https://diyhue.org/</a></p>
+<h2>Wat heb je nodig</h2>
+<h3>Hardware</h3>
+<ul>
+  <li>Raspberry pi incl. voeding</li>
+  <li>Micro SD kaart en adapter</li>
+  <li>Wemos D1 mini</li>
+  <li>WS2812B Ledstrip</li>
+  <li>5V 2A Voeding USB</li>
+  <li>Soldeerbout</li>
+  <li>Electra draad</li>
+  <li>Micro usb draad</li>
+</ul>
+<h3>Software</h3>
+<p>Voor dit project heb je een aantal programma’s nodig. Voordat je begint dien je de programma’s te downloaden en te installeren, voor zover je dat nog niet al eens eerder hebt gedaan.</p>
+<ul>
+  <li>Voor het formateren van je SD-kaart kun je SDFormatter gebruiken</li>
+  <li>Voor de iso-image wegschrijven op je SD-kaart kun je Win32DiskImager gebruiken</li>
+  <li>Als teksteditor kun je (optioneel) Notepad++ downloaden</li>
+  <li>Om je Wemos D1 te programeren heb je Arduino IDE nodig</li>
+</ul>
+<p>Daarnaast heb je onderstaande twee programma’s nodig.</p>
+<ul>
+  <li>Philips HUE app voor iOS of Android op je mobiele telefoon. Ga hiervoor naar de Android Play store of Apple App store.</li>
+  <li>Daarnaast dien je de Raspbian disk image te downloaden. Kies het bestand met de naam " Raspbian Stretch with desktop” welke je op deze pagina kunt vinden.</li>
+</ul>
+<h2>Arduino IDE instellen om je Wemos D1 mini te kunnen programeren</h2>
+<h3>Stap 1</h3>
+<p>Om de Wemos D1 mini te kunnen gebruiken binnen Arduino IDE dien je eerst de benodigde Bibliotheek te installeren.</p>
+<p>Start Arduino IDE en open voorkeuren:</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-voorkeuren.png"></figure>
+<p>Vul onder Board Manager URL's het volgende adres in: <a href="http://arduino.esp8266.com/stable/package_esp8266com_index.json">http://arduino.esp8266.com/stable/package_esp8266com_index.json</a></p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Boardmanager.png"></figure>
+<p>Klik op OK en open Hulpmiddelen -&gt; Board -&gt; Board Beheer...</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-BoardLibrary.png"></figure>
+<p>Zoek op esp8266 en klik op installeren.</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-esp8266.png"></figure>
+<blockquote>
+  <p>Sluit Arduino IDE en start deze opnieuw op.</p>
+</blockquote>
+<p>Om de code te kunnen gebruiken moeten we een aantal Bibliotheek onderdelen installeren:</p>
+<ul>
+  <li>WiFiManager by tzapu.</li>
+  <li>ArduinoJson by Benoit Blanchon.</li>
+  <li>NeoPixelBus by Makuna.</li>
+</ul>
+<p>Open Hulpmiddelen -&gt; Bibliotheek beheren...</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Library.png"></figure>
+<p>Zoek nu de boven vermelde onderdelen:</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Library-WifiManager.png"></figure>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Library-ArduinoJson.png"></figure>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Library-NeoPixelBus.png"></figure>
+<p>Nu zijn we bijna klaar om de code te programmeren, neem de instellingen van de onderstaande afbeelding over en selecteer de poort die op uw systeem word gebruikt voor uw Wemos D1 mini.</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-WemosD1-configuratie.png"></figure>
+<h2>De code op uw Wemos D1 mini programmeren</h2>
+<h3>Stap 2</h3>
+<p>Kopieer de code van <a href="https://raw.githubusercontent.com/diyhue/Lights/master/Arduino/Generic_WS2812_Strip/Generic_WS2812_Strip.ino">deze site</a> en plak deze in het venster van Arduino IDE:</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-copy-code.png"></figure>
+<p>Pas de code aan naar uw eigen Led strip voorkeuren.deze string geeft aan in hoeveel lampen uw ledstrip word opgesplitst<code>lightsCount = 3</code> wijzig de volgende waarde om aan te geven hoeveel leds uw strip heeft <code>pixelCount =</code> en met de volgende waarde kun je de kleur overgang bepalen <code>transitionLeds = 6</code> .</p>
+<p>Als je klaar bent met aanpassen gaan we de code programmeren</p>
+<p>Sluit je Wemos D1 mini aan en klik nu op Upload:</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Arduino-IDE-Upload.png"></figure>
+<p>&nbsp;</p>
+<h2>Aansluitschema Wemos D1 mini en WS2812b Ledstrip</h2>
+<h3>Stap 3</h3>
+<p>Sluit je ledstrip op de volgende manier aan:</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/Wemos-D1-mini-aansluitschema.png"></figure>
+<blockquote>
+  <p>Rood = PlusZwart = MinGeel = Data in</p>
+</blockquote>
+<h2>Raspberry PI installeren</h2>
+<h3>Stap 4</h3>
+<p>Als eerste gaan we Raspbian op een SD-kaart zetten</p>
+<ol>
+  <li>Unzip de Raspberry Pi disk image</li>
+  <li>Plaats de SD-kaart in je computer</li>
+  <li>Start het programma SDFormatter</li>
+  <li>Selecteer de juiste stationsnaam van de SD-kaart</li>
+  <li>Selecteer de optie “Quick format”.</li>
+  <li>Klik op Format</li>
+  <li>Start het programma Win32DiskImager</li>
+  <li>Selecteer de Raspberry PI disk image en juiste stationsnaam van je SD-kaart</li>
+  <li>Selecteer “Write” om de disk image op SD-kaart weg te schrijven</li>
+</ol>
+<p>Als tweede haal je de SD-kaart uit je computer en stop deze in je Raspberry PI. En vervolgens sluiten we de Raspberry PI aan.</p>
+<ol>
+  <li>Verbind de Raspberry PI met een ethernetkabel aan je netwerk</li>
+  <li>Verbind de Raspberry PI met een HDMI kabel op een PC-monitor</li>
+  <li>Sluit een USB-toetsenboard en USB-muis aan op de Raspberry PI</li>
+  <li>Sluit de 5V voeding aan op de Raspberry PI</li>
+</ol>
+<p>Alles zou nu aangesloten moeten zijn. Nu kun je de Raspberry Pi aanzetten.</p>
+<h2>Hue bridge emulator installeren</h2>
+<h3>Stap 5</h3>
+<p>In deze stap gaan we de hue bridge emulator installeren</p>
+<p>Ga op de raspberry pi naar het start menu en open terminal.Type het volgende commando in:</p>
+<p>Dit installeert de bridge emulator en zorgt er voor dat deze automatisch opstart.</p>
+<blockquote>
+  <p>Herstart de Raspberry pi</p>
+</blockquote>
+<h2>Hue applicatie configureren</h2>
+<h3>Stap 6</h3>
+<p>Nu kan je de Philips Hue applicatie op je telefoon instellen, als er gevraagd word om op de link knop te drukken open je een webpagina naar het ipadres van je raspberrypi. Klik &nbsp;hier op Link device en gebruik Hue als gebruikersnaam en wachtwoord. Klik op Activate en je app zou nu verbonden moeten zijn met de hue bridge emulator. Nu kan je lampen en kamers toevoegen zoals bij een normale Hue bridge.</p>
+<p>Veel plezier met vriendelijke groet Jos.</p>
