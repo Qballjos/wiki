@@ -1,0 +1,188 @@
+<!--
+title: Ambilight met Raspberry PI en Philips HUE
+description: 
+published: 1
+date: 2021-06-20T10:31:27.887Z
+tags: 
+editor: ckeditor
+dateCreated: 2021-06-20T10:31:27.887Z
+-->
+
+<h2>Wat heb je nodig</h2>
+<h3>Hardware</h3>
+<ul>
+  <li>Raspberry Pi 3 model B</li>
+  <li>Sd-kaart voor Raspberry Pi</li>
+  <li>USB video grabber (STK1160 – EasyCap TV Capture)</li>
+  <li>Philips Hue Verlichting</li>
+  <li>inclusief Philips HUE bridge (of diyhue)</li>
+  <li>inclusief Philips HUE lampen (of diyhue ondersteunde lamp)</li>
+  <li>Tafellamp (2 stuks), wij gebruiken Ikea ‘TORSBO’</li>
+  <li>HDMI splitter</li>
+  <li>HDMI naar RCA adapter</li>
+  <li>RCA videokabel</li>
+</ul>
+<h3>Software</h3>
+<p>Voor dit project heb je een aantal programma’s nodig. Voordat je begint dien je de programma’s te downloaden en te installeren, voor zover je dat nog niet al eens eerder hebt gedaan.</p>
+<ul>
+  <li>Voor het kopiëren van bestanden kun je WinSCP gebruiken</li>
+  <li>Voor ssh toegang tot je Raspberry PI kun je Putty gebruiken. (klik op putty.exe in de lijst)</li>
+  <li>Voor het formateren van je SD-kaart kun je SDFormatter gebruiken</li>
+  <li>Voor de iso-image wegschrijven op je SD-kaart kun je Win32DiskImager gebruiken</li>
+  <li>Als teksteditor kun je (optioneel) Notepad++ downloaden</li>
+</ul>
+<p>Daarnaast heb je onderstaande twee programma’s nodig.</p>
+<ul>
+  <li>Philips HUE app voor iOS of Android op je mobiele telefoon. Ga hiervoor naar de Android Play store of Apple App store.</li>
+  <li>Daarnaast dien je de OSMC disk image te downloaden. Kies het bestand met de naam “OSMC for RPI2 / RPi3” welke je onderaan <a href="https://osmc.tv/download/">op deze pagina</a> kunt vinden onder het kopje diskimages.</li>
+</ul>
+<h2>In gebruik nemen van de Philips HUE bridge en lampen</h2>
+<h3>Stap 1</h3>
+<p>Plaats de twee Philips HUE lampen aan weerszijde van je televisie. Sluit vervolgens de Philips HUE bridge middels een ethernetkabel aan op je thuisnetwerk. Hierna installeer je de Philips HUE app op je iOS of Android mobiele telefoon. Controleer of je de twee Philips HUE lampen via de Philips HUE app kunt bedienen</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/PhilipsHueDevice_Schema1.png"></figure>
+<h2>De lightID achterhalen, statisch IP instellen en gebruikersnaam aanmaken</h2>
+<h3>Stap 2</h3>
+<p>De volgende stap is om de lightID van je twee Philips HUE lampen te achterhalen, de Philips HUE bridge een statisch IP-adres (output IP) te geven en voor de Philips HUE bridge een gebruikersnaam (username) aan te maken.</p>
+<p>Open je Philips HUE app op je iOS of Android mobiele telefoon en noteer de nummers naast elke lamp.</p>
+<p>Open middels je browser naar 192.168.2.254 en log in op je KPN ExperiaBox. Ga naar Home en klik “Meer” onder het kopje LAN_instellingen. In de lijst van apparaten, zie je de naam “Philips-hue”. Noteer het IP-adres en klik vervolgens op de naam “Philips-hue”. Zet nu de optie ” Vast IP adres bij DHCP binding” op Aan.</p>
+<p>Ga naar <a href="https://developers.meethue.com">https://developers.meethue.com</a> en volg de stappen bij “Getting started”. Wanneer je alle stappen hebt gevolgd heb je een verbinding met je Philips HUE bridge kunnen maken. Noteer de 32 karakter “username”</p>
+<h2>Verbind de HDMI reciever met de Raspberry PI</h2>
+<h3>Stap 3</h3>
+<p>Plaats de HDMI splitter tussen je Reciever en je Tv. Plaats de HDMI naar &nbsp;RCA adapter in de HDMI Splitter. Neem de RCA videokabel en sluit deze &nbsp;aan op de USB video-grabber (gele-connector) en verbind vervolgens de &nbsp;USB Video-grabber middels de usb-connecter op de Raspberry PI.</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/PhilipsHueDevice_Schema2.png"></figure>
+<h2>Raspberry PI installeren</h2>
+<h3>Stap 4</h3>
+<p>Als eerste gaan we de OSMC software op een SD-kaart zetten</p>
+<ol>
+  <li>Unzip de Raspberry PI disk image</li>
+  <li>Plaats de SD-kaart in je computer</li>
+  <li>Start het programma SDFormatter</li>
+  <li>Selecteer de juiste stationsnaam van de SD-kaart</li>
+  <li>Selecteer de optie “Quick format”.</li>
+  <li>Klik op Format</li>
+  <li>Start het programma Win32DiskImager</li>
+  <li>Selecteer de Raspberry PI disk image en juiste stationsnaam van je SD-kaart</li>
+  <li>Selecteer “Write” om de disk image op SD-kaart weg te schrijven</li>
+</ol>
+<p>Als tweede haal je de SD-kaart uit je computer en stop deze in je Raspberry PI. En vervolgens sluiten we de Raspberry PI aan.</p>
+<ol>
+  <li>Verbind de Raspberry PI met een ethernetkabel aan je netwerk</li>
+  <li>Verbind de Raspberry PI met een HDMI kabel op een PC-monitor</li>
+  <li>Sluit een USB-toetsenboard en USB-muis aan op de Raspberry PI</li>
+  <li>Sluit de USB-videograbber aan op de Raspberry PI</li>
+  <li>Sluit de 5V voeding aan op de Raspberry PI</li>
+</ol>
+<p>Alles zou nu aangesloten moeten zijn. Nu kun je de Raspberry Pi aanzetten. Wanneer de Raspberry Pi is opgestart controleren we de internetconnectie. Ga naar SYSTEM - system info en noteer je IP-adres, je hebt deze later nodig.</p>
+<h2>Videograbber controleren</h2>
+<h3>Stap 5</h3>
+<p>In deze stap gaan we de werking van de videograbber controleren. We beginnen met Putty. Maak verbinding met je Raspberry Pi.</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor osmc en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor osmc en druk op enter.</li>
+  <li>Nu gaan we alle usb-poorten controleren, type hiervoor Isusb en druk op enter. Je dient in de lijst van usb-apparaten de videograbber tegen te komen. (note: mogelijk ondersteund Openelec het commando Isusb niet. Ga er dan vanuit dat alle USB apparaten correct werken).</li>
+</ul>
+<h2>Hyperion applicatie configureren</h2>
+<h3>Stap 6</h3>
+<p>De software die gebruikt wordt om het Ambilight effect te genereren komt van Hyperion, een gratis open-source Ambilight software. Het is redelijk eenvoudig op te zetten en komt zelfs met een Java applicatie (die wij overigens niet gebruiken) voor een eenvoudige installatie en configuratie. Kijk op de <a href="https://hyperion-project.org/wiki/HyperCon-Information">website van Hyperion</a> voor meer uitleg over de werking van deze applicatie. Nu dient de Hyperion applicatie ingesteld te worden om uw Philips Hue lampen te kunnen aansturen. We beginnen met Putty. Maak verbinding met je Raspberry Pi.</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor root en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor openelec en druk op enter.</li>
+  <li>Ga nu met het commando cd naar /storage/.config/</li>
+  <li>Open nu met het commando vi het bestand hyperion.config.json</li>
+</ul>
+<p>Pas vervolgens het bestand hyperion.config.json aan. Een stap voor stap uitleg vind je hieronder.</p>
+<blockquote>
+  <p>Opmerking:Wanneer je een aanpassing aan het hyperion.config.json bestand doet, controleer dan altijd of er geen ‘,’ mist!”</p>
+</blockquote>
+<h5>“device” sectie</h5>
+<p>Om de Philips HUE bridge te kunnen aansturen, dien je het “type” in te stellen op “philipshue”, geef je bij “output” het IP-adres van je Philips HUE bridge en bij “username” vul je het 32-karakter gebruikersnaam in. Bij “lightIds” geef je de nummers op van je twee lampen. De “lightIds” kunnen worden verkregen via je Philips HUE bridge onder de volgende URL: <code>http://192.168.2.xxx/api/your-32-character-username-goes-here/lights/</code></p>
+<p>voorbeeld, "device" sectie:</p>
+<h5>“framegrabber” sectie</h5>
+<p>De Philips HUE bridge snelheid is beperkt tot 10-30 verzoeken per seconden. Vanwege deze beperking dient de framegrabber snelheid ingesteld te worden op 20 / aantal lampen. Dus bij twee lampen is dat 10.0Hz</p>
+<p>voorbeeld, "framegrabber" sectie</p>
+<h5>“smoothing” sectie</h5>
+<p>Om Ambilight werkend te krijgen hebben wij “smooting” ingesteld op “linear”. De instelling “smooting” maakt kleurovergangen iets geleidelijker. “type”: het afvlakkingstype dat wordt gebruikt “time_ms”: de tijd die wordt gebruikt om afbeeldingen in ms te verzamelen. Hoe hoger de waarde, hoe “langer” de afvlakking zal zijn. “updateFrequency”: de frequentie van de uitgangsupdate naar de leds in Hz “updateDelay”: de vertraging van de output naar leds (in periodes van afvlakking (1 / Hz))</p>
+<p>voorbeeld, "smoothing" sectie:</p>
+<blockquote>
+  <p>Note: Mogelijk dat in andere configuraties “smooting” ingesteld moet worden op “none” of dat je de “updateFrequency” op een lager getal moet zetten.</p>
+</blockquote>
+<h5>“leds” sectie</h5>
+<p>In dit onderdeel stel je het detectiegebied per lamp in. Hyperion noemt het hscan/vscan. Aan de hand van onderstaande tekening wordt duidelijk welk gebied per lamp gescand wordt.</p>
+<figure class="image"><img src="https://josvisserict.nl/content/images/2019/06/PhilipsHueDevice_leds-sectie.png"></figure>
+<p>voorbeeld, "leds" sectie:</p>
+<blockquote>
+  <p>BELANGRIJK: De lamp ‘index’ van je eerste lamp is 0!</p>
+</blockquote>
+<h5>“blackborderdetector” sectie</h5>
+<p>In dit onderdeel stel je “blackborderdetector” in. De “blackborderdetector” helpt bij een zwarte rand / balken te negeren, als uw tv-beeldverhouding niet overeenkomt met de beeldverhouding (voorbeeld: 4: 3 inhoud of 21: 9 op een 16: 9 tv)</p>
+<p>voorbeeld, "blackborderdetector" sectie:</p>
+<h5>“effects” sectie</h5>
+<p>Wanneer de Raspberry PI opstart, zal er een lichteffect worden getoond. Zorg dat het pad naar de effecten goed staat ingesteld.</p>
+<p>voorbeeld, "effects" sectie:</p>
+<h5>“bootsequence” sectie</h5>
+<p>Wanneer de Raspberry PI opstart, zal er een lichteffect worden getoond. In de “bootsequence” sectie bepaal je welk effect daadwerkelijk wordt toegepast. Je kunt het effect aanpassen en de tijdsduur. Pas het effect naar eigen inzicht aan.</p>
+<p>voorbeeld, "bootsequence" sectie:</p>
+<h5>“grabber-v4l2” sectie</h5>
+<p>Zorg dat je een compatible USB video grabber (STK1160 – EasyCap TV Capture) gebruikt. “device”: het pad van het systeemapparaat dat wordt gebruikt “input”: de invoer die wordt gebruikt “standard”: wij kiezen PAL “width”: de breedte van het beeld (-1: geen wijziging, gebruikt de maximale waarde) “height”: de hoogte van het beeld (-1: geen verandering, gebruikt de maximale waarde) “frameDecimation”: de factor die wordt gebruikt om de resolutie te verlagen voordat deze wordt gebruikt van hyperion (bespaart CPU) “sizeDecimation”: de factor die wordt gebruikt om de resolutie te verlagen voordat deze van hyperion wordt gebruikt (bespaart CPU) “priority”: het prioriteitskanaal van de v4l2-grabber (lagere-waarde resulteert in HOGERE prioriteit!) “mode”: 2D / 3D “cropLeft”: instelling om eventuele linker zwarte rand af te snijden “cropRight”: instelling om eventuele rechter zwarte rand af te snijden “cropTop”: instelling om eventuele bovenste zwarte rand af te snijden “cropBottom”: instelling om eventuele onderste zwarte rand af te snijden “redSignalThreshold”: aanpassen in procenten. “greenSignalThreshold”: aanpassen in procenten. blueSignalThreshold”: aanpassen in procenten.</p>
+<p>voorbeeld, "grabber-v4l2" sectie:</p>
+<h5>“xbmcVideoChecker” sectie</h5>
+<p>Standaard staan de meeste instellingen goed. Wij hebben ervoor gekozen om alleen “grabVideo” op ‘true’ te zetten.</p>
+<p>voorbeeld, "xbmcVideoChecker" sectie:</p>
+<h5>HULP: voorbeeld hyperion.config.json configuratie-bestand downloaden</h5>
+<p>Wanneer je niet zo bekend met de vi-editor kun je ook het complete configuratie downloaden, het zip-bestand uitpakken en daarna aanpassen met notepad++. Vervolgens kun je het hyperion.config.json via WinSCP naar de directory /storage/.config kopiëren op je Raspberry PI.</p>
+<p>Download het voorbeeld <a href="https://kpnhackathon.nl/wp-content/uploads/2017/11/hyperion.config.json_.zip">hyperion.config.json.zip</a> configuratie-bestand.</p>
+<p>Open vervolgens Putty. Maak verbinding met je Raspberry Pi.</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor root en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor openelec en druk op enter.</li>
+  <li>Ga nu met het commando cd naar /storage/.config/</li>
+  <li>type nu het command ./autostart.sh om de Hyperion applicatie opnieuw op te starten.</li>
+</ul>
+<h2>De Philips Hue (Ambilight) installatie in gebruik nemen</h2>
+<h3>Stap 7</h3>
+<p>Wanneer je de voorgaande stappen succesvol hebt uitgevoerd is het nu tijd om de Philips Hue lampen in gebruik te gaan nemen.</p>
+<p>Heel veel kijkplezier toegewenst! Namens Jos Visser.</p>
+<h2>Problemen oplossen</h2>
+<p>Het kan voorkomen dat er iets niet werkt. Geen paniek, hieronder volgen enkele hints en tips.</p>
+<h5>Hyperion applicatie herstarten</h5>
+<p>Maak met Putty verbinding met je Raspberry Pi.</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor root en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor openelec en druk op enter.</li>
+  <li>Ga nu met het commando cd naar /storage/.config/</li>
+  <li>Type nu het commando ./autostart.sh</li>
+</ul>
+<h5>Hyperion applicatie logfile bekijken</h5>
+<p>Wanneer dingen niet werken zoals je wilt, is het handig te kijken wat er mogelijk fout gaat. Het beste kun je hiervoor de hyperion logfile bekijken. Dit doe ja als volgt. Maak met Putty verbinding met je Raspberry Pi.</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor root en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor openelec en druk op enter.</li>
+  <li>Ga nu met het commando cd naar /storage/logfiles/</li>
+  <li>Type nu het commando cat hyperion.log</li>
+</ul>
+<h5>USB video grabber testen</h5>
+<p>Maak met Putty verbinding met je Raspberry Pi</p>
+<ul>
+  <li>Type het ip-adres van je Raspberry Pi.</li>
+  <li>Klik op Open.</li>
+  <li>Je krijgt een scherm waarin je een gebruikernaam moet invoeren, gebruik hiervoor root en druk op enter.</li>
+  <li>Nu wordt om een wachtwoord gevraagd, gebruik hiervoor openelec en druk op enter.</li>
+  <li>Ga nu met het commando cd naar /storage/.config/</li>
+  <li>Type nu het commando LD_LIBRARY_PATH=/storage/hyperion/bin /storage/hyperion/bin/hyperion-v4l2 -v PAL –width 720 –height 576 –screenshot</li>
+  <li>In de map /storage/.config/ zal als het goed is het bestand screenshot.png zijn aangemaakt.</li>
+  <li>Download het bestand met behulp van WinSCP en kijk op je computer of screenshot is gelukt.</li>
+</ul>
+<h5>Lamp(en) werken niet</h5>
+<p>Wanneer je aanpassingen aan het hyperion.config.json bestand doet, controleer dan altijd of er geen ‘,’ missen!”</p>
+<h5>Lamp werkt niet</h5>
+<p>In het het hyperion.config.json configuratie bestand stel je in de “leds” sectie het detectiegebied per lamp in. Let erop dat de ‘index’ van je eerste lamp 0 is!</p>
